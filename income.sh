@@ -39,8 +39,8 @@ if [[ $calculate_income =~ [yY] ]]; then
 	read -p "Calculate monthly income? [Y/N] " monthly
 
 	if [[  $monthly  =~ [yY] ]]; then
-		read -p "$ per hour: $" hour
-		read -p "Workweek: " workweek
+		read -p "$ per hour? $" hour
+		read -p "Workweek? " workweek
 
 		week=$(($hour*$workweek))
 		month=$(($week*4))
