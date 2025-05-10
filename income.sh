@@ -4,7 +4,6 @@
 #  income.sh  #
 #             #
 ###############
-
 read -p "Calculate income? [Y/N] " calculate_income
 
 if [[ $calculate_income =~ [yY] ]]; then
@@ -14,15 +13,18 @@ if [[ $calculate_income =~ [yY] ]]; then
 	if [[ $yearly =~ [yY]  ]]; then
 		read -p "$ per year? " year
 
+		hourly=$(($year/12/5/8))
 		weekly=$(($year/12/4))
 		monthly=$(($year/12))
 
+		per_hour=$(printf "\$%'d\n" "$hourly")
 		per_week=$(printf "\$%'d\n" "$weekly")
 		per_month=$(printf "\$%'d\n" "$monthly")
 		per_year=$(printf "\$%'d\n" "$year")
 
 		declare -A income_total
 		income_total=(
+			[$per_hour]="per hour"
 			[$per_week]="per week"
 			[$per_month]="per month"
 			[$per_year]="per year"
@@ -65,6 +67,7 @@ if [[ $calculate_income =~ [yY] ]]; then
 	fi
 fi
 
+
 read -p "Calculate rent? [Y/N] " calculate_rent
 
 if [[ $calculate_rent =~ [yY] ]]; then
@@ -82,9 +85,10 @@ if [[ $calculate_rent =~ [yY] ]]; then
 	yearly_c=$(printf "%'d\n" "$yearly")
 
 	printf "\n\$$remains_c after monthly rent payments"
-	printf "\n\$$yearly_c after yearly rent payments\n"
+	printf "\n\$$yearly_c after yearly rent payments"
 	printf "\n$percent%% of income goes to rent\n\n"
 fi
+
 
 read -p "Calculate income brackets? [Y/N] " calculate_income_bracket
 
@@ -110,5 +114,28 @@ if [[ $calculate_income_bracket =~ [yY] ]]; then
         printf "\n\$$mid_c annually is middle class"
         printf "\n\$$uppmid_c annually is upper middle class"
         printf "\n\$$upp_c annually is upper class"
-        printf "\n$\$$wel_c annually or more is wealthy\n\n"
+        printf "\n\$$wel_c annually or more is wealthy\n\n"
+fi
+
+
+read -p "Calculate retirement income? [Y/N] " retirement_income
+
+if [[  $retirement_income  =~ [yY]  ]]; then
+	read -p "Annual income $" annual
+	read -p "Years worked? " years
+	read -p "Current age? " age
+
+	if [[ $age -gt 65  ]]; then
+		printf "\nAge greater than 65\n"
+		exit 0
+	fi
+
+	yearly_i=$(($annual*$years))
+	retirement_i=$(((65 - $age)*$yearly_i))
+
+	yearly_c=$(printf "%'d\n" "$yearly_i")
+	retirement_c=$(printf "%'d\n" "$retirement_i")
+
+	printf "\n\$$yearly_c made in $years year(s)"
+	printf "\n\$$retirement_c if worked same job at same income until 65 years age\n\n"
 fi
