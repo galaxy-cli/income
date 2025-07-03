@@ -1,141 +1,116 @@
 #!/bin/bash
-###############
-#             #
-#  income.sh  #
-#             #
-###############
-read -p "Calculate income? [Y/N] " calculate_income
+#       (_)_ __   ___ ___  _ __ ___   ___   ___| |__
+# 	| | '_ \ / __/ _ \| '_ ` _ \ / _ \ / __| '_ \
+# 	| | | | | (_| (_) | | | | | |  __/_\__ \ | | |
+# 	|_|_| |_|\___\___/|_| |_| |_|\___(_)___/_| |_|
+# https://github.com/galaxy-cli/income
+# income.sh - A Bash script for quick personal finance calculations: estimate income (hourly, weekly, monthly, yearly), rent affordability, and income brackets from the command line.
 
-if [[ $calculate_income =~ [yY] ]]; then
+#--- Utility Functions ---#
 
-	read -p "Calculate yearly income? [Y/N] " yearly
+print_income_breakdown() {
+    local hour week month year
+    hour=$1; week=$2; month=$3; year=$4
+    printf "\nIncome Breakdown:"
+    printf "\n  Per hour:  \$%'d" "$hour"
+    printf "\n  Per week:  \$%'d" "$week"
+    printf "\n  Per month: \$%'d" "$month"
+    printf "\n  Per year:  \$%'d\n\n" "$year"
+}
 
-	if [[ $yearly =~ [yY]  ]]; then
-		read -p "$ per year? " year
+get_positive_number() {
+    local prompt var clean
+    prompt=$1
+    while true; do
+        read -p "$prompt" var
+        # Remove commas from input
+        clean="${var//,/}"
+        if [[ "$clean" =~ ^[0-9]+$ ]] && [ "$clean" -gt 0 ]; then
+            echo "$clean"
+            return
+        else
+            echo "Please enter a positive number (commas are allowed, e.g., 1,000)."
+        fi
+    done
+}
 
-		hourly=$(($year/12/5/8))
-		weekly=$(($year/12/4))
-		monthly=$(($year/12))
+get_non_negative_number() {
+    local prompt var clean
+    prompt=$1
+    while true; do
+        read -p "$prompt" var
+        # Remove commas from input
+        clean="${var//,/}"
+        if [[ "$clean" =~ ^[0-9]+$ ]]; then
+            echo "$clean"
+            return
+        else
+            echo "Please enter a non-negative integer (0 or greater, commas allowed)."
+        fi
+    done
+}
 
-		per_hour=$(printf "\$%'d\n" "$hourly")
-		per_week=$(printf "\$%'d\n" "$weekly")
-		per_month=$(printf "\$%'d\n" "$monthly")
-		per_year=$(printf "\$%'d\n" "$year")
+#--- Main Calculators ---#
 
-		declare -A income_total
-		income_total=(
-			[$per_hour]="per hour"
-			[$per_week]="per week"
-			[$per_month]="per month"
-			[$per_year]="per year"
-		)
+calculate_income() {
+    echo "=== Income Calculator ==="
+    read -p "Calculate yearly income? [Y/N] " yearly
+    if [[ $yearly =~ [yY] ]]; then
+        year=$(get_positive_number "Annual income ($): ")
+        hour=$((year/12/5/8))
+        week=$((year/12/4))
+        month=$((year/12))
+        print_income_breakdown "$hour" "$week" "$month" "$year"
+    fi
 
-		for key in "${!income_total[@]}"; do
-			printf "\n$key ${income_total[$key]}"
-		done
+    read -p "Calculate monthly income? [Y/N] " monthly
+    if [[ $monthly =~ [yY] ]]; then
+        hour=$(get_positive_number "Hourly wage ($): ")
+        workweek=$(get_positive_number "Hours per week: ")
+        week=$((hour*workweek))
+        month=$((week*4))
+        year=$((month*12))
+        print_income_breakdown "$hour" "$week" "$month" "$year"
+    fi
+}
 
-		printf "\n\n"
-	fi
+calculate_rent() {
+    echo "=== Rent Calculator ==="
+    rent=$(get_positive_number "Rent per month ($): ")
+    income=$(get_positive_number "Income per month ($): ")
+    roommates=$(get_non_negative_number "Number of roommates: ")
+    total_people=$((roommates + 1))
+    remains=$((income - (rent/total_people)))
+    yearly=$((remains*12))
+    percent=$((((rent/total_people)*100)/income))
+    printf "\nAfter rent: \$%'d/month, \$%'d/year" "$remains" "$yearly"
+    printf "\nRent is %d%% of income\n\n" "$percent"
+}
 
+calculate_income_bracket() {
+    echo "=== Income Bracket Calculator ==="
+    mid=$(get_positive_number "Middle class income bracket ($): ")
+    work=$((mid/2))
+    lowmid=$(echo "scale=0; $mid/1.5" | bc)
+    uppmid=$(echo "$mid*1.5" | bc)
+    uppmid_int=$(printf "%.0f" "$uppmid")
+    upp=$((mid*2))
+    wel=$((mid*3))
+    printf "\n\$%'d or less: Working class" "$work"
+    printf "\n\$%'d: Lower middle class" "$lowmid"
+    printf "\n\$%'d: Middle class" "$mid"
+    printf "\n\$%'d: Upper middle class" "$uppmid_int"
+    printf "\n\$%'d: Upper class" "$upp"
+    printf "\n\$%'d or more: Wealthy\n\n" "$wel"
+}
 
-	read -p "Calculate monthly income? [Y/N] " monthly
+#--- Main Script ---#
 
-	if [[  $monthly  =~ [yY] ]]; then
-		read -p "$ per hour? $" hour
-		read -p "Workweek? " workweek
+read -p "Calculate income? [Y/N] " ans
+[[ $ans =~ [yY] ]] && calculate_income
 
-		week=$(($hour*$workweek))
-		month=$(($week*4))
-		year=$(($month*12))
+read -p "Calculate rent? [Y/N] " ans
+[[ $ans =~ [yY] ]] && calculate_rent
 
-		per_week=$(printf "\$%'d\n" "$week")
-		per_month=$(printf "\$%'d\n" "$month")
-		per_year=$(printf "\$%'d\n" "$year")
-
-		declare -A income_total
-		income_total=(
-			[$per_week]="per week"
-			[$per_month]="per month"
-			[$per_year]="per year"
-		)
-
-		for key in "${!income_total[@]}"; do
-			printf "\n$key ${income_total[$key]}"
-		done
-
-		printf "\n\n"
-	fi
-fi
-
-
-read -p "Calculate rent? [Y/N] " calculate_rent
-
-if [[ $calculate_rent =~ [yY] ]]; then
-
-	read -p "Rent per month? $" rent
-	read -p "Income per month? $" income
-	read -p "Number of roommates? " roomates
-
-	roomates=$((roomates + 1))
-	remains=$((income - (rent/roomates)))
-	yearly=$(($remains*12))
-	percent=$((((rent/roomates)*100)/income))
-
-	remains_c=$(printf "%'d\n" "$remains")
-	yearly_c=$(printf "%'d\n" "$yearly")
-
-	printf "\n\$$remains_c after monthly rent payments"
-	printf "\n\$$yearly_c after yearly rent payments"
-	printf "\n$percent%% of income goes to rent\n\n"
-fi
-
-
-read -p "Calculate income brackets? [Y/N] " calculate_income_bracket
-
-if [[ $calculate_income_bracket =~ [yY] ]]; then
-        read -p "Middle class income bracket? $" mid
-
-        work=$(($mid/2));
-        lowmid=$(echo "scale=0; $mid/1.5" | bc)
-        uppmid_raw=$(echo "scale=0; $mid*1.5" | bc)
-        uppmid=$(printf "%.0f" "$uppmid_raw")
-        upp=$(($mid*2))
-        wel=$(($mid*3))
-
-        work_c=$(printf "%'d\n" "$work")
-        lowmid_c=$(printf "%'d\n" "$lowmid")
-        mid_c=$(printf "%'d\n" "$mid")
-        uppmid_c=$(printf "%'d\n" "$uppmid")
-        upp_c=$(printf "%'d\n" "$upp")
-        wel_c=$(printf "%'d\n" "$wel")
-
-        printf "\n\$$work_c annually or less is working class"
-        printf "\n\$$lowmid_c annually is lower middle class"
-        printf "\n\$$mid_c annually is middle class"
-        printf "\n\$$uppmid_c annually is upper middle class"
-        printf "\n\$$upp_c annually is upper class"
-        printf "\n\$$wel_c annually or more is wealthy\n\n"
-fi
-
-
-read -p "Calculate retirement income? [Y/N] " retirement_income
-
-if [[  $retirement_income  =~ [yY]  ]]; then
-	read -p "Annual income $" annual
-	read -p "Years worked? " years
-	read -p "Current age? " age
-
-	if [[ $age -gt 65  ]]; then
-		printf "\nAge greater than 65\n"
-		exit 0
-	fi
-
-	yearly_i=$(($annual*$years))
-	retirement_i=$(((65 - $age)*$yearly_i))
-
-	yearly_c=$(printf "%'d\n" "$yearly_i")
-	retirement_c=$(printf "%'d\n" "$retirement_i")
-
-	printf "\n\$$yearly_c made in $years year(s)"
-	printf "\n\$$retirement_c if worked same job at same income until 65 years age\n\n"
-fi
+read -p "Calculate income brackets? [Y/N] " ans
+[[ $ans =~ [yY] ]] && calculate_income_bracket
