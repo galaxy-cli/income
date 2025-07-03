@@ -1,2 +1,2 @@
 # USAGE
-Input integers to price calculates
+Input integers to finance calculations
