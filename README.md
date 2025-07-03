@@ -1,2 +1,2 @@
-# income.sh
-A simple income calculator
+# USAGE
+Input integers to price calculates
