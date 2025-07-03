@@ -4,7 +4,7 @@
 # 	| | | | | (_| (_) | | | | | |  __/_\__ \ | | |
 # 	|_|_| |_|\___\___/|_| |_| |_|\___(_)___/_| |_|
 # https://github.com/galaxy-cli/income
-# income.sh - A Bash script for quick personal finance calculations: estimate income (hourly, weekly, monthly, yearly), rent affordability, and income brackets from the command line.
+# income.sh - A Bash script for quick personal finance calculations: estimate income (hourly, weekly, monthly, yearly), rent affordability, and income brackets—all from the command line 
 
 #--- Utility Functions ---#
 
