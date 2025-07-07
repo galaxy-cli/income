@@ -3,8 +3,9 @@
 # 	| | '_ \ / __/ _ \| '_ ` _ \ / _ \
 # 	| | | | | (_| (_) | | | | | |  __/
 # 	|_|_| |_|\___\___/|_| |_| |_|\___|
-# https://github.com/galaxy-cli/income
 # income - A Bash script for quick personal finance calculations: estimate income (hourly, weekly, monthly, yearly), rent affordability, and income brackets—all from the command line 
+# Author: galaxy-cli
+# Project: https://github.com/galaxy-cli/income
 
 #--- Utility Functions ---#
 
