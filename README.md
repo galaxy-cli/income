@@ -1,10 +1,5 @@
 # 💰 income · Personal Finance CLI Tool
 
-   (_)_ __   ___ ___  _ __ ___   ___  
-   | | '_ \ / __/ _ \| '_ \` _ \ / _ \ 
-   | | | | | (_| (_) | | | | | |  __/ 
-   |_|_| |_|\___\___/|_| |_| |_|\___|  
-
 **income** is a simple, interactive Bash script designed for quick personal finance calculations right from your terminal. Use it to estimate your income across timeframes, calculate rent affordability, and determine your income class — all without leaving the command line.
 
 - 🧮 Estimate income: hourly, weekly, monthly, yearly  
