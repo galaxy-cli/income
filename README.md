@@ -1,14 +1,14 @@
-# 💰 income · Personal Finance CLI Tool
+# income · Personal Finance CLI Tool
 
 **income** is a simple, interactive Bash script designed for quick personal finance calculations right from your terminal. Use it to estimate your income across timeframes, calculate rent affordability, and determine your income class — all without leaving the command line.
 
-- 🧮 Estimate income: hourly, weekly, monthly, yearly  
-- 🏠 Analyze rent affordability with or without roommates  
-- 📊 Determine your income class bracket  
+- Estimate income: hourly, weekly, monthly, yearly  
+- Analyze rent affordability with or without roommates  
+- Determine your income class bracket  
 
 ---
 
-## 🚀 Features
+## Features
 
 - Convert between hourly, weekly, monthly, and yearly income
 - Check if your rent is reasonable based on your income
@@ -17,7 +17,7 @@
 
 ---
 
-## 📥 Installation
+## Installation
 
 Simply download the script and make it executable:
 
@@ -36,7 +36,7 @@ chmod +x income.sh
 
 ---
 
-## ▶️ Usage
+## Usage
 
 Run the script from your terminal:
 
@@ -50,14 +50,14 @@ Calculate rent? [Y/N]
 Calculate income brackets? [Y/N]
 ```
 
-### 💵 Income Calculator
+### Income Calculator
 
 Estimate income based on:
 
 - Annual salary → Calculates hourly, weekly, monthly
 - Hourly wage → Calculates weekly, monthly, yearly
 
-### 🏠 Rent Calculator
+### Rent Calculator
 
 Enter:
 
@@ -71,7 +71,7 @@ The script outputs:
 - Remaining income after rent
 - Rent as a percentage of income
 
-### 📈 Income Bracket Calculator
+### Income Bracket Calculator
 
 Enter a "middle class" benchmark income. Outputs standard bracket approximation:
 
@@ -84,7 +84,7 @@ Enter a "middle class" benchmark income. Outputs standard bracket approximation:
 
 ---
 
-## 📌 Example
+## Example
 
 === Income Calculator ===
 ```
@@ -99,7 +99,7 @@ Per year: $60,000
 ```
 ---
 
-## 🧠 How It Works
+## How It Works
 
 All math is basic Bash arithmetic. To handle floating point division (e.g., 1.5), the script uses `bc`.
 
@@ -109,14 +109,19 @@ User inputs are sanitized to allow commas for input clarity:
 clean="${var//,/}"
 
 ---
+## License
 
-## 🛠 Requirements
-
-- Bash 4+
-- Unix-based system (Linux, macOS, WSL)
+This project is licensed under the MIT License. See the LICENSE file for details.
 
 ---
 
-## 📄 License
+## Author & Contact
 
-[MIT License](LICENSE)
+**galaxy-cli**
+
+GitHub: [https://github.com/galaxy-cli/income](https://github.com/galaxy-cli/incomen)
+
+---
+
+Thank you for checking out `income`!  
+Happy calculating!
