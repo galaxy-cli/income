@@ -121,7 +121,3 @@ This project is licensed under the MIT License. See the LICENSE file for details
 
 GitHub: [https://github.com/galaxy-cli/income](https://github.com/galaxy-cli/incomen)
 
----
-
-Thank you for checking out `income`!  
-Happy calculating!
