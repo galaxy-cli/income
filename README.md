@@ -1,4 +1,4 @@
-# income (Personal Finance CLI Tool)
+# income
 
 **income** is a simple, interactive Bash script designed for quick personal finance calculations right from your terminal. Use it to estimate your income across timeframes, calculate rent affordability, and determine your income class — all without leaving the command line.
 
