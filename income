@@ -1,13 +1,10 @@
 #!/bin/bash
 #       (_)_ __   ___ ___  _ __ ___   ___
-# 	| | '_ \ / __/ _ \| '_ ` _ \ / _ \
-# 	| | | | | (_| (_) | | | | | |  __/
-# 	|_|_| |_|\___\___/|_| |_| |_|\___|
-# income - A Bash script for quick personal finance calculations: estimate income (hourly, weekly, monthly, yearly), rent affordability, and income brackets—all from the command line 
+#   | | '_ \ / __/ _ \| '_ ` _ \ / _ \
+#   | | | | | (_| (_) | | | | | |  __/
+#   |_|_| |_|\___\___/|_| |_| |_|\___|
+# income - Personal finance calc: income, rent, brackets CLI
 # Author: galaxy-cli
-# Project: https://github.com/galaxy-cli/income
-
-#--- Utility Functions ---#
 
 print_income_breakdown() {
     local hour week month year
@@ -22,57 +19,46 @@ print_income_breakdown() {
 get_positive_number() {
     local prompt var clean
     prompt=$1
-    while true; do
-        read -p "$prompt" var
-        # Remove commas from input
-        clean="${var//,/}"
-        if [[ "$clean" =~ ^[0-9]+$ ]] && [ "$clean" -gt 0 ]; then
-            echo "$clean"
-            return
-        else
-            echo "Please enter a positive number (commas are allowed, e.g., 1,000)."
-        fi
-    done
+    read -p "$prompt" var
+    clean="${var//,/}"
+    if [[ "$clean" =~ ^[0-9]+$ ]] && [ "$clean" -gt 0 ]; then
+        echo "$clean"
+    else
+        echo "Invalid input. Please enter a positive number with commas allowed (e.g., 1,000). Exiting."
+        exit 1
+    fi
 }
 
 get_non_negative_number() {
     local prompt var clean
     prompt=$1
-    while true; do
-        read -p "$prompt" var
-        # Remove commas from input
-        clean="${var//,/}"
-        if [[ "$clean" =~ ^[0-9]+$ ]]; then
-            echo "$clean"
-            return
-        else
-            echo "Please enter a non-negative integer (0 or greater, commas allowed)."
-        fi
-    done
+    read -p "$prompt" var
+    clean="${var//,/}"
+    if [[ "$clean" =~ ^[0-9]+$ ]]; then
+        echo "$clean"
+    else
+        echo "Invalid input. Please enter a non-negative integer with commas allowed (0 or greater). Exiting."
+        exit 1
+    fi
 }
 
-#--- Main Calculators ---#
+calculate_yearly_income() {
+    echo "=== Yearly Income Calculator ==="
+    year=$(get_positive_number "Annual income ($): ")
+    hour=$((year/12/5/8))
+    week=$((year/12/4))
+    month=$((year/12))
+    print_income_breakdown "$hour" "$week" "$month" "$year"
+}
 
-calculate_income() {
-    echo "=== Income Calculator ==="
-    read -p "Calculate yearly income? [Y/N] " yearly
-    if [[ $yearly =~ [yY] ]]; then
-        year=$(get_positive_number "Annual income ($): ")
-        hour=$((year/12/5/8))
-        week=$((year/12/4))
-        month=$((year/12))
-        print_income_breakdown "$hour" "$week" "$month" "$year"
-    fi
-
-    read -p "Calculate monthly income? [Y/N] " monthly
-    if [[ $monthly =~ [yY] ]]; then
-        hour=$(get_positive_number "Hourly wage ($): ")
-        workweek=$(get_positive_number "Hours per week: ")
-        week=$((hour*workweek))
-        month=$((week*4))
-        year=$((month*12))
-        print_income_breakdown "$hour" "$week" "$month" "$year"
-    fi
+calculate_monthly_income() {
+    echo "=== Monthly Income Calculator ==="
+    hour=$(get_positive_number "Hourly wage ($): ")
+    workweek=$(get_positive_number "Hours per week: ")
+    week=$((hour*workweek))
+    month=$((week*4))
+    year=$((month*12))
+    print_income_breakdown "$hour" "$week" "$month" "$year"
 }
 
 calculate_rent() {
@@ -97,21 +83,74 @@ calculate_income_bracket() {
     uppmid_int=$(printf "%.0f" "$uppmid")
     upp=$((mid*2))
     wel=$((mid*3))
-    printf "\n\$%'d or less: Working class" "$work"
-    printf "\n\$%'d: Lower middle class" "$lowmid"
-    printf "\n\$%'d: Middle class" "$mid"
-    printf "\n\$%'d: Upper middle class" "$uppmid_int"
-    printf "\n\$%'d: Upper class" "$upp"
-    printf "\n\$%'d or more: Wealthy\n\n" "$wel"
+    printf "\nWORKING CLASS\n\$%'d or less\n" "$work"
+    printf "\nLOWER MIDDLE CLASS class\n\$%'d\n" "$lowmid"
+    printf "\nMIDDLE CLASS\n\$%'d\n" "$mid"
+    printf "\nUPPER MIDDLE CLASS\n\$%'d\n" "$uppmid_int"
+    printf "\nUPPER CLASS\n\$%'d\n" "$upp"
+    printf "\nWEALTHLY\n\$%'d or more\n\n" "$wel"
 }
 
-#--- Main Script ---#
+print_help() {
+    cat << EOF
+USAGE
+$0 [OPTIONS]
 
-read -p "Calculate income? [Y/N] " ans
-[[ $ans =~ [yY] ]] && calculate_income
+OPTIONS
+  --monthly-income   Calculate monthly income
+  --yearly-income    Calculate yearly income
+  --monthly-rent     Calculate rent affordability
+  --income-bracket   Calculate income brackets
+  --all              Run all calculators interactively
+  --help             Show this help message
 
-read -p "Calculate rent? [Y/N] " ans
-[[ $ans =~ [yY] ]] && calculate_rent
+EXAMPLE
+$0 --monthly-income --monthly-rent
+EOF
+}
 
-read -p "Calculate income brackets? [Y/N] " ans
-[[ $ans =~ [yY] ]] && calculate_income_bracket
+if [[ $# -eq 0 ]]; then
+    income -h
+    exit 1
+fi
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -h | --help)
+            print_help
+            exit 0
+            ;;
+        --monthly-income)
+            calculate_monthly_income
+            shift
+            ;;
+        --yearly-income)
+            calculate_yearly_income
+            shift
+            ;;
+        --monthly-rent)
+            calculate_rent
+            shift
+            ;;
+        --income-bracket)
+            calculate_income_bracket
+            shift
+            ;;
+        --all)
+            read -p "Calculate yearly income? [Y/N] " yearly
+            [[ $yearly =~ [yY] ]] && calculate_yearly_income
+            read -p "Calculate monthly income? [Y/N] " monthly
+            [[ $monthly =~ [yY] ]] && calculate_monthly_income
+            read -p "Calculate rent? [Y/N] " rent
+            [[ $rent =~ [yY] ]] && calculate_rent
+            read -p "Calculate income brackets? [Y/N] " bracket
+            [[ $bracket =~ [yY] ]] && calculate_income_bracket
+            shift
+            ;;
+        *)
+            echo "Unknown option: $1"
+            print_help
+            exit 1
+            ;;
+    esac
+done
