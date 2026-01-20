@@ -77,18 +77,21 @@ calculate_rent() {
 calculate_income_bracket() {
     echo "=== Income Bracket Calculator ==="
     mid=$(get_positive_number "Middle class income bracket ($): ")
+    work_p=$((mid/3))
     work=$((mid/2))
     lowmid=$(echo "scale=0; $mid/1.5" | bc)
     uppmid=$(echo "$mid*1.5" | bc)
     uppmid_int=$(printf "%.0f" "$uppmid")
     upp=$((mid*2))
     wel=$((mid*3))
-    printf "\nWORKING CLASS\n\$%'d or less\n" "$work"
-    printf "\nLOWER MIDDLE CLASS class\n\$%'d\n" "$lowmid"
-    printf "\nMIDDLE CLASS\n\$%'d\n" "$mid"
-    printf "\nUPPER MIDDLE CLASS\n\$%'d\n" "$uppmid_int"
-    printf "\nUPPER CLASS\n\$%'d\n" "$upp"
-    printf "\nWEALTHLY\n\$%'d or more\n\n" "$wel"
+    printf "\nCLASS BRACKET"
+    printf "\nWorking Poor  =  \$%'d\n" "$work_p"
+    printf "Working       =  \$%'d\n" "$work"
+    printf "Lower-Middle  =  \$%'d\n" "$lowmid"
+    printf "Middle	      =  \$%'d\n" "$mid"
+    printf "Upper-Middle  =  \$%'d\n" "$uppmid_int"
+    printf "Upper         =  \$%'d\n" "$upp"
+    printf "Wealthly      =  \$%'d +\n\n" "$wel"
 }
 
 print_help() {
