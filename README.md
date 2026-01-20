@@ -75,11 +75,12 @@ The script outputs:
 
 Enter a "middle class" benchmark income. Outputs standard bracket approximation:
 
-- Working class
-- Lower middle class
-- Middle class
-- Upper middle class
-- Upper class
+- Working Poor
+- Working
+- Lower-Middle
+- Middle
+- Upper-Middle
+- Upper
 - Wealthy
 
 ---
