@@ -83,6 +83,13 @@ Enter a "middle class" benchmark income. Outputs standard bracket approximation:
 - Upper
 - Wealthy
 
+### Investment Calculation
+
+Enter values to calculate income investments:
+
+- Monthly income
+- Amount invested
+
 ---
 
 ## Example
