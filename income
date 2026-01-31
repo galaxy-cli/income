@@ -10,10 +10,10 @@ print_income_breakdown() {
 	local hour week month year
 	hour=$1; week=$2; month=$3; year=$4
 	printf "\nIncome Breakdown:"
-	printf "\n Per hour: \$%'d" "$hour"
-	printf "\n Per week: \$%'d" "$week"
-	printf "\n Per month: \$%'d" "$month"
-	printf "\n Per year: \$%'d\n\n" "$year"
+	printf "\n \$%'d/hour" "$hour"
+	printf "\n \$%'d/week" "$week"
+	printf "\n \$%'d/month" "$month"
+	printf "\n \$%'d/year\n\n" "$year"
 }
 
 get_positive_number() {
@@ -99,45 +99,59 @@ calculate_income_bracket() {
 	upp=$((mid*2))
 	wel=$((mid*3))
 	printf "\nCLASS BRACKET"
-	printf "\nWorking Poor = \$%'d\n" "$work_p"
-	printf "Working = \$%'d\n" "$work"
-	printf "Lower-Middle = \$%'d\n" "$lowmid"
-	printf "Middle = \$%'d\n" "$mid"
-	printf "Upper-Middle = \$%'d\n" "$uppmid_int"
-	printf "Upper = \$%'d\n" "$upp"
-	printf "Wealthly = \$%'d +\n\n" "$wel"
+	printf "\nWorking Poor\n \$%'d/year -\n" "$work_p"
+	printf "\nWorking\n \$%'d/year\n" "$work"
+	printf "\nLower-Middle\n \$%'d/year\n" "$lowmid"
+	printf "\nMiddle\n \$%'d/year\n" "$mid"
+	printf "\nUpper-Middle\n \$%'d/year\n" "$uppmid_int"
+	printf "\nUpper\n \$%'d/year\n" "$upp"
+	printf "\nWealthly\n \$%'d/year +\n\n" "$wel"
 }
 
 calculate_investment() {
-	echo "=== Investment Calculator ==="
-	monthly_income=$(get_positive_number "Monthly income? ($): ")
-	invest_pct=$(get_percentage "Amount invested? (%): ")
-		
-	weekly_income=$((monthly_income / 4))
-	yearly_income=$((monthly_income * 12))
-	weekly_invested=$((weekly_income * invest_pct / 100))
-	monthly_invested=$((monthly_income * invest_pct / 100))
-	yearly_invested=$((yearly_income * invest_pct / 100))
-		
-	weekly_liquid=$((weekly_income - weekly_invested))
-	monthly_liquid=$((monthly_income - monthly_invested))
-	yearly_liquid=$((yearly_income - yearly_invested))
-		
-	
-	printf "\nEarned:"
-	printf "\n Per month?: \$%'d" "$monthly_income"
-	printf "\n Per year?: \$%'d\n" "$yearly_income"
+        echo "=== Investment Calculator ==="
+        monthly_gross=$(get_positive_number "Monthly income? ($): ")
+        takehome_pct=$(get_percentage "Take-home pay? (%): ")
+        invest_pct=$(get_percentage "Amount invested? (% of take-home): ")
+        save_pct=$(get_percentage "Amount saved? (% of take-home): ")
 
-	printf "\nInvested (%'d%%):" "$invest_pct"
-	printf "\n Per week?: \$%'d" "$weekly_invested"
-	printf "\n Per month?: \$%'d" "$monthly_invested"
-	printf "\n Per year?: \$%'d\n" "$yearly_invested"
-		
-	printf "\nLiquid Cash (%'d%%):" "$((100 - $invest_pct))"
-	printf "\n Per week?: \$%'d" "$weekly_liquid"
-	printf "\n Per month?: \$%'d" "$monthly_liquid"
-	printf "\n Per year?: \$%'d\n\n" "$yearly_liquid"
+        monthly_takehome=$((monthly_gross * takehome_pct / 100))
+
+        invested_from_takehome=$((monthly_takehome * invest_pct / 100))
+        saved_from_takehome=$((monthly_takehome * save_pct / 100))
+
+        monthly_discretionary=$((monthly_takehome - invested_from_takehome - saved_from_takehome))
+
+        weekly_takehome=$((monthly_takehome / 4))
+        yearly_takehome=$((monthly_takehome * 12))
+
+        weekly_invested=$((invested_from_takehome / 4))
+        yearly_invested=$((invested_from_takehome * 12))
+
+        weekly_saved=$((saved_from_takehome / 4))
+        yearly_saved=$((saved_from_takehome * 12))
+
+        weekly_discretionary=$((monthly_discretionary / 4))
+        yearly_discretionary=$((monthly_discretionary * 12))
+
+        printf "\nTake-home pay (%d%% of monthly income):" "$takehome_pct"
+        printf "\n \$%'d/month" "$monthly_takehome"
+        printf "\n \$%'d/year\n" "$yearly_takehome"
+
+        printf "\nInvested (%d%% of take-home):" "$invest_pct"
+        printf "\n \$%'d/month" "$invested_from_takehome"
+        printf "\n \$%'d/year\n" "$yearly_invested"
+
+        printf "\nSaved (%d%% of take-home):" "$save_pct"
+        printf "\n \$%'d/month" "$saved_from_takehome"
+        printf "\n \$%'d/year\n" "$yearly_saved"
+
+        printf "\nDiscretionary:"
+        printf "\n \$%'d/month" "$monthly_discretionary"
+        printf "\n \$%'d/year\n\n" "$yearly_discretionary"
 }
+
+
 
 print_help() {
 	cat << EOF
